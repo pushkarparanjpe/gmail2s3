@@ -3,7 +3,7 @@ Dump all emails from Gmail to AWS S3.
 
 # Quickstart
 
-Create a local_config file defining all the following constants:
+Create a local_config.py file defining all the following constants:
 ```python3
 ORG_EMAIL = "@gmail.com"
 FROM_EMAIL = "john.doe" + ORG_EMAIL

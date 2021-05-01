@@ -5,8 +5,9 @@ import boto3
 from local_config import *
 
 
-def get_S3_bucket():
-    boto3.setup_default_session(profile_name=AWS_CONFIG_PROFILE_NAME)
+def get_s3_bucket():
+    if 'AWS_CONFIG_PROFILE_NAME' in globals():
+        boto3.setup_default_session(profile_name=AWS_CONFIG_PROFILE_NAME)
     s3 = boto3.resource('s3')
     return s3.Bucket(AWS_S3_BUCKET_NAME)
 
@@ -18,7 +19,7 @@ def push_to_s3(key, value, bucket):
 
 
 def copy_gmail_to_s3():
-    bucket = get_S3_bucket()
+    bucket = get_s3_bucket()
     try:
         mail = imaplib.IMAP4_SSL(SMTP_SERVER)
         mail.login(FROM_EMAIL, FROM_PWD)
@@ -53,3 +54,4 @@ def validate_s3_email_obj(stuff):
 
 if __name__ == '__main__':
     copy_gmail_to_s3()
+    # TODO : validate_s3_email_obj(...)
