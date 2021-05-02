@@ -2,6 +2,7 @@ import imaplib
 import email
 import traceback
 import boto3
+import io
 from local_config import *
 
 
@@ -16,6 +17,21 @@ def push_to_s3(key, value, bucket):
     key = f'{AWS_S3_BUCKET_SUB_DIR}/{key}'
     result = bucket.put_object(Key=key, Body=value)
     print(result)
+
+
+def fetch_from_s3(key, bucket_name):
+    key = f'{AWS_S3_BUCKET_SUB_DIR}/{key}'
+    print(bucket_name, key)
+    bytes_buffer = io.BytesIO()
+    client = boto3.client('s3')
+    client.download_fileobj(Bucket=bucket_name, Key=key, Fileobj=bytes_buffer)
+    byte_value = bytes_buffer.getvalue()
+    str_value = ''
+    try:
+        str_value = byte_value.decode()  # python3, default decoding is utf-8
+    except UnicodeDecodeError as ude:
+        print(ude)
+    return str_value
 
 
 def copy_gmail_to_s3():
@@ -43,15 +59,19 @@ def copy_gmail_to_s3():
 
 
 def validate_s3_email_obj(stuff):
-    # TODO : implement this fully
-    msg = email.message_from_string(str(stuff, 'utf-8'))
+    msg = email.message_from_string(stuff)
     email_subject = msg['subject']
     email_from = msg['from']
-    print('From : ' + email_from + '\n')
-    print('Subject : ' + email_subject + '\n')
+    print('From : ', email_from)
+    print('Subject : ', email_subject)
     print()
+    return msg
 
 
 if __name__ == '__main__':
-    copy_gmail_to_s3()
-    # TODO : validate_s3_email_obj(...)
+    # copy_gmail_to_s3()
+    bucket = get_s3_bucket()
+    msg_id = 10
+    stuff = fetch_from_s3(msg_id, AWS_S3_BUCKET_NAME)
+    msg = validate_s3_email_obj(stuff)
+    print(msg)
