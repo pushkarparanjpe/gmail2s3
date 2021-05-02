@@ -13,4 +13,5 @@ SMTP_PORT = 993
 AWS_CONFIG_PROFILE_NAME = 'your AWS config profile'
 AWS_S3_BUCKET_NAME = 'AWS S3 bucket to hold your emails'
 AWS_S3_BUCKET_SUB_DIR = 'mailbox'
+AWS_S3_PARQUET_FILE_NAME = 'name of parquet file'
 ```
